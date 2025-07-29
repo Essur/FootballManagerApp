@@ -33,6 +33,9 @@ public abstract class AbstractTeamService {
 
     public TeamDto updateTeam(TeamSaveDto dto, Long id) {
         Team team = findById(id).orElseThrow(() -> new DataNotFoundException("Team with id " + id + " not found"));
+        if (existsByName(dto.name())) {
+            throw new IllegalArgumentException("Team with name '" + dto.name() + "' already exists");
+        }
         teamMapper.updateEntity(dto, team);
         return teamMapper.toDto(save(team));
     }
