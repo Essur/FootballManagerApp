@@ -56,9 +56,9 @@ public class JdbcPlayerRepository implements PlayerRepository {
                 ps.setInt(4, player.getExperience());
 
                 if (player.getTeam() != null && player.getTeam().getId() != null) {
-                    ps.setLong(6, player.getTeam().getId());
+                    ps.setLong(5, player.getTeam().getId());
                 } else {
-                    ps.setNull(6, java.sql.Types.BIGINT);
+                    ps.setNull(5, java.sql.Types.BIGINT);
                 }
 
                 return ps;
