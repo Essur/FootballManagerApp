@@ -51,4 +51,13 @@ public class HibernateTeamRepository implements TeamRepository {
         Long count = em.createQuery(query, Long.class).setParameter("id", id).getSingleResult();
         return count > 0;
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        String query = "SELECT COUNT(t) FROM Team t WHERE t.name = :name";
+        Long count = em.createQuery(query, Long.class)
+                .setParameter("name", name)
+                .getSingleResult();
+        return count > 0;
+    }
 }

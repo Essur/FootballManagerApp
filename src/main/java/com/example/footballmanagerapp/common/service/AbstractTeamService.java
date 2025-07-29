@@ -21,8 +21,12 @@ public abstract class AbstractTeamService {
     protected abstract List<Team> findAll();
     protected abstract void deleteById(Long id);
     protected abstract boolean existsById(Long id);
+    protected abstract boolean existsByName(String name);
 
     public Long createTeam(TeamSaveDto dto) {
+        if (existsByName(dto.name())) {
+            throw new IllegalArgumentException("Team with name '" + dto.name() + "' already exists");
+        }
         Team team = teamMapper.toEntity(dto);
         return save(team).getId();
     }

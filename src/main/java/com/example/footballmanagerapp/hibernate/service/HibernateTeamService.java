@@ -42,4 +42,9 @@ public class HibernateTeamService extends AbstractTeamService {
     protected boolean existsById(Long id) {
         return teamRepository.existsById(id);
     }
+
+    @Override
+    protected boolean existsByName(String name){
+        return teamRepository.existsByName(name);
+    }
 }

@@ -123,4 +123,14 @@ public class JdbcTeamRepository implements TeamRepository {
         );
         return count != null && count > 0;
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM team WHERE name = ?",
+                Integer.class,
+                name
+        );
+        return count != null && count > 0;
+    }
 }

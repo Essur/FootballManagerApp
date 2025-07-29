@@ -11,4 +11,5 @@ public interface TeamRepository {
     List<Team> findAll();
     void deleteById(Long id);
     boolean existsById(Long id);
+    boolean existsByName(String name);
 }
