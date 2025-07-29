@@ -5,7 +5,7 @@ import java.util.List;
 public record TeamDto(Long teamId,
                       String name,
                       String city,
-                      Double balance,
-                      Double commission,
+                      String balance,
+                      Integer commission,
                       List<PlayerDto> players) {
 }

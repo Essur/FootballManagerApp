@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,8 +22,11 @@ public class Team {
     private String name;
 
     private String city;
-    private Double balance;
-    private Double commission;
+
+    @Column(precision = 19, scale = 2)
+    private BigDecimal balance;
+
+    private Integer commission;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

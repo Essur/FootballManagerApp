@@ -5,8 +5,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public record TeamSaveDto(@NotEmpty String name,
                           @NotEmpty String city,
-                          @Min(0) @NotNull Double balance,
-                          @Min(0) @Max(10) @NotNull Double commission) {
+                          @Min(0) @NotNull BigDecimal balance,
+                          @Min(0) @Max(10) @NotNull Integer commission) {
 }

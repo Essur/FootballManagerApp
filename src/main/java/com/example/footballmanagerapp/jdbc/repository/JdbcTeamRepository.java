@@ -27,8 +27,8 @@ public class JdbcTeamRepository implements TeamRepository {
         team.setId(rs.getLong("id"));
         team.setName(rs.getString("name"));
         team.setCity(rs.getString("city"));
-        team.setBalance(rs.getDouble("balance"));
-        team.setCommission(rs.getDouble("commission"));
+        team.setBalance(rs.getBigDecimal("balance"));
+        team.setCommission(rs.getInt("commission"));
         return team;
     };
 
@@ -44,8 +44,8 @@ public class JdbcTeamRepository implements TeamRepository {
                 );
                 ps.setString(1, team.getName());
                 ps.setString(2, team.getCity());
-                ps.setDouble(3, team.getBalance());
-                ps.setDouble(4, team.getCommission());
+                ps.setBigDecimal(3, team.getBalance());
+                ps.setInt(4, team.getCommission());
                 return ps;
             }, keyHolder);
 

@@ -9,6 +9,8 @@ import com.example.footballmanagerapp.entity.Team;
 import com.example.footballmanagerapp.exception.DataNotFoundException;
 import com.example.footballmanagerapp.mapper.PlayerMapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,15 +81,10 @@ public abstract class AbstractPlayerService {
         Team targetTeam = teamRepository.findById(transferRequestDto.targetTeamId())
                 .orElseThrow(() -> new DataNotFoundException("Target team with id " + transferRequestDto.targetTeamId() + " not found"));
 
-        double playerPrice = player.getExperience() * 100_000.0 / player.getAge();
-        double totalPrice = playerPrice * (1 + currentTeam.getCommission() / 100.0);
+        BigDecimal totalPrice = getTotalPrice(player, currentTeam, targetTeam);
 
-        if (targetTeam.getBalance() < totalPrice) {
-            throw new IllegalArgumentException("Target team don't have enough balance");
-        }
-
-        targetTeam.setBalance(targetTeam.getBalance() - totalPrice);
-        currentTeam.setBalance(currentTeam.getBalance() + totalPrice);
+        targetTeam.setBalance(targetTeam.getBalance().subtract(totalPrice));
+        currentTeam.setBalance(currentTeam.getBalance().add(totalPrice));
         player.setTeam(targetTeam);
 
         teamRepository.save(targetTeam);
@@ -95,5 +92,25 @@ public abstract class AbstractPlayerService {
         save(player);
 
         return playerMapper.toPlayerDto(player);
+    }
+
+
+    private static BigDecimal getTotalPrice(Player player, Team currentTeam, Team targetTeam) {
+        BigDecimal experience = BigDecimal.valueOf(player.getExperience());
+        BigDecimal age = BigDecimal.valueOf(player.getAge());
+        BigDecimal playerPrice = experience.multiply(BigDecimal.valueOf(100_000))
+                .divide(age, 2, RoundingMode.HALF_UP);
+
+        int commission = currentTeam.getCommission();
+        BigDecimal commissionMultiplier = BigDecimal.valueOf(commission)
+                .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
+                .add(BigDecimal.ONE);
+
+        BigDecimal totalPrice = playerPrice.multiply(commissionMultiplier).setScale(2, RoundingMode.HALF_UP);
+
+        if (targetTeam.getBalance().compareTo(totalPrice) < 0) {
+            throw new IllegalArgumentException("Target team doesn't have enough balance");
+        }
+        return totalPrice;
     }
 }

@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS team (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     city VARCHAR(255),
-    balance DOUBLE,
+    balance DECIMAL (19,2),
     commission INT DEFAULT 0
     );
 
