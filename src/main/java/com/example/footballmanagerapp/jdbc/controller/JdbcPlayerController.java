@@ -7,6 +7,7 @@ import com.example.footballmanagerapp.jdbc.service.JdbcPlayerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,37 +16,40 @@ import java.util.List;
 @RequestMapping("/jdbc/players")
 @RequiredArgsConstructor
 public class JdbcPlayerController {
-    private final JdbcPlayerService jdbcPlayerService;
+    private final JdbcPlayerService playerService;
 
     @PostMapping
-    public Long createPlayer(@Valid @RequestBody PlayerSaveDto dto) {
-        return jdbcPlayerService.createPlayer(dto);
+    public ResponseEntity<Long> createPlayer(@Valid @RequestBody PlayerSaveDto dto) {
+        Long createdPlayerId = playerService.createPlayer(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPlayerId);
     }
 
     @PostMapping("/{id}/transfer")
-    public PlayerDto transferPlayer(@PathVariable Long id, @Valid @RequestBody TransferRequestDto dto) {
-        return jdbcPlayerService.transferPlayer(id, dto);
+    public ResponseEntity<PlayerDto> transferPlayer(@PathVariable Long id, @Valid @RequestBody TransferRequestDto transferRequestDto) {
+        PlayerDto updatedPlayer = playerService.transferPlayer(id, transferRequestDto);
+        return ResponseEntity.ok(updatedPlayer);
     }
 
     @PutMapping("/{id}")
-    public PlayerDto updatePlayer(@PathVariable Long id,
-                                  @Valid @RequestBody PlayerSaveDto dto) {
-        return jdbcPlayerService.updatePlayer(dto, id);
+    public ResponseEntity<PlayerDto> updatePlayer(@PathVariable Long id,
+                                                  @Valid @RequestBody PlayerSaveDto dto) {
+        PlayerDto updatedPlayer = playerService.updatePlayer(dto, id);
+        return ResponseEntity.ok(updatedPlayer);
     }
 
     @GetMapping
-    public List<PlayerDto> getPlayers() {
-        return jdbcPlayerService.findAll();
+    public ResponseEntity<List<PlayerDto>> getPlayers() {
+        return ResponseEntity.ok(playerService.findAll());
     }
 
     @GetMapping("/{id}")
-    public PlayerDto getPlayer(@PathVariable Long id) {
-        return jdbcPlayerService.findByIdDto(id);
+    public ResponseEntity<PlayerDto> getPlayerById(@PathVariable Long id) {
+        return ResponseEntity.ok(playerService.findByIdDto(id));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deletePlayer(@PathVariable Long id) {
-        jdbcPlayerService.deletePlayer(id);
+    public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
+        playerService.deletePlayer(id);
+        return ResponseEntity.noContent().build();
     }
 }
