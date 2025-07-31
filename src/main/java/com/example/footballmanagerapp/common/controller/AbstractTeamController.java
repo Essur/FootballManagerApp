@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Validated
-public class AbstractTeamController <S extends AbstractTeamService> {
+public abstract class AbstractTeamController <S extends AbstractTeamService> {
     protected final S teamService;
 
     public AbstractTeamController(final S teamService) {
