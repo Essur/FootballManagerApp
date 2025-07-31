@@ -8,9 +8,10 @@ import com.example.footballmanagerapp.entity.Player;
 import com.example.footballmanagerapp.entity.Team;
 import com.example.footballmanagerapp.exception.DataNotFoundException;
 import com.example.footballmanagerapp.mapper.PlayerMapper;
+import com.example.footballmanagerapp.util.PlayerPriceCalculatorUtil;
+import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public abstract class AbstractPlayerService {
 
     protected abstract boolean existsById(Long id);
 
+    @Transactional
     public Long createPlayer(PlayerSaveDto playerDto) {
         Team team = teamRepository.findById(playerDto.teamId())
                 .orElseThrow(() -> new DataNotFoundException("Team with id " + playerDto.teamId() + " not found"));
@@ -43,6 +45,7 @@ public abstract class AbstractPlayerService {
         return save(player).getId();
     }
 
+    @Transactional
     public PlayerDto updatePlayer(PlayerSaveDto playerDto, Long playerId) {
         Player player = findById(playerId)
                 .orElseThrow(() -> new DataNotFoundException("Player with id " + playerId + " not found"));
@@ -60,6 +63,7 @@ public abstract class AbstractPlayerService {
         return playerMapper.toPlayerDto(player);
     }
 
+    @Transactional
     public void deletePlayer(Long playerId) {
         if (!existsById(playerId)) {
             throw new DataNotFoundException("Player with id " + playerId + " not found");
@@ -67,6 +71,7 @@ public abstract class AbstractPlayerService {
         deleteById(playerId);
     }
 
+    @Transactional
     public PlayerDto transferPlayer(Long playerId, TransferRequestDto transferRequestDto) {
         Player player = findById(playerId)
                 .orElseThrow(() -> new DataNotFoundException("Player with id " + playerId + " not found"));
@@ -81,7 +86,10 @@ public abstract class AbstractPlayerService {
         Team targetTeam = teamRepository.findById(transferRequestDto.targetTeamId())
                 .orElseThrow(() -> new DataNotFoundException("Target team with id " + transferRequestDto.targetTeamId() + " not found"));
 
-        BigDecimal totalPrice = getTotalPrice(player, currentTeam, targetTeam);
+        BigDecimal totalPrice = PlayerPriceCalculatorUtil.calculateTotalPrice(player.getExperience(), player.getAge(), currentTeam.getCommission());
+        if (targetTeam.getBalance().compareTo(totalPrice) < 0) {
+            throw new IllegalArgumentException("Target team doesn't have enough balance");
+        }
 
         targetTeam.setBalance(targetTeam.getBalance().subtract(totalPrice));
         currentTeam.setBalance(currentTeam.getBalance().add(totalPrice));
@@ -92,25 +100,5 @@ public abstract class AbstractPlayerService {
         save(player);
 
         return playerMapper.toPlayerDto(player);
-    }
-
-
-    private static BigDecimal getTotalPrice(Player player, Team currentTeam, Team targetTeam) {
-        BigDecimal experience = BigDecimal.valueOf(player.getExperience());
-        BigDecimal age = BigDecimal.valueOf(player.getAge());
-        BigDecimal playerPrice = experience.multiply(BigDecimal.valueOf(100_000))
-                .divide(age, 2, RoundingMode.HALF_UP);
-
-        int commission = currentTeam.getCommission();
-        BigDecimal commissionMultiplier = BigDecimal.valueOf(commission)
-                .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)
-                .add(BigDecimal.ONE);
-
-        BigDecimal totalPrice = playerPrice.multiply(commissionMultiplier).setScale(2, RoundingMode.HALF_UP);
-
-        if (targetTeam.getBalance().compareTo(totalPrice) < 0) {
-            throw new IllegalArgumentException("Target team doesn't have enough balance");
-        }
-        return totalPrice;
     }
 }

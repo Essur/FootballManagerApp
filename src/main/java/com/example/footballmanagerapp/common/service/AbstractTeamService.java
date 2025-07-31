@@ -5,6 +5,7 @@ import com.example.footballmanagerapp.dto.resonse.TeamDto;
 import com.example.footballmanagerapp.entity.Team;
 import com.example.footballmanagerapp.exception.DataNotFoundException;
 import com.example.footballmanagerapp.mapper.TeamMapper;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public abstract class AbstractTeamService {
     protected abstract boolean existsById(Long id);
     protected abstract boolean existsByName(String name);
 
+    @Transactional
     public Long createTeam(TeamSaveDto dto) {
         if (existsByName(dto.name())) {
             throw new IllegalArgumentException("Team with name '" + dto.name() + "' already exists");
@@ -31,6 +33,7 @@ public abstract class AbstractTeamService {
         return save(team).getId();
     }
 
+    @Transactional
     public TeamDto updateTeam(TeamSaveDto dto, Long id) {
         Team team = findById(id).orElseThrow(() -> new DataNotFoundException("Team with id " + id + " not found"));
         if (existsByName(dto.name())) {
@@ -49,6 +52,7 @@ public abstract class AbstractTeamService {
         return teamMapper.toDto(team);
     }
 
+    @Transactional
     public void deleteTeamById(Long id) {
         if (!existsById(id)) {
             throw new DataNotFoundException("Team with id " + id + " not found");
