@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleDataNotFoundException(IllegalArgumentException e) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         log.trace(e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
     }
