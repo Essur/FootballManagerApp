@@ -14,6 +14,16 @@ The application will start on:
 ```
 http://localhost:8080
 ```
+## 🐳 The application can also be launched via Docker.
+Clone repo:
+```bash
+git clone https://github.com/Essur/FootballManagerApp
+```
+Run followings commands in bash (Linux) or PowerShell (Windows):
+```powershell
+docker build -t football-manager-app . &&
+docker run -p 8080:8080 football-manager-app
+```
 ## 📮 API Collection
 A complete Postman collection with example requests can be found here:
 
