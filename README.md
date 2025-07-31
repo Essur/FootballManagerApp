@@ -24,6 +24,10 @@ Run followings commands in bash (Linux) or PowerShell (Windows):
 docker build -t football-manager-app . &&
 docker run -p 8080:8080 football-manager-app
 ```
+Or use docker compose instead:
+```bash
+docker compose up --build
+```
 ## 📮 API Collection
 A complete Postman collection with example requests can be found here:
 
