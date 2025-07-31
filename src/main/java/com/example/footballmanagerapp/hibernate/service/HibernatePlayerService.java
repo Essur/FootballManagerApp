@@ -5,14 +5,12 @@ import com.example.footballmanagerapp.entity.Player;
 import com.example.footballmanagerapp.hibernate.repository.HibernatePlayerRepository;
 import com.example.footballmanagerapp.hibernate.repository.HibernateTeamRepository;
 import com.example.footballmanagerapp.mapper.PlayerMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Slf4j
 public class HibernatePlayerService extends AbstractPlayerService {
     private final HibernatePlayerRepository playerRepository;
 

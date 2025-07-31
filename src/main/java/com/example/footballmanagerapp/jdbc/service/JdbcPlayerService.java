@@ -5,14 +5,12 @@ import com.example.footballmanagerapp.entity.Player;
 import com.example.footballmanagerapp.jdbc.repository.JdbcPlayerRepository;
 import com.example.footballmanagerapp.jdbc.repository.JdbcTeamRepository;
 import com.example.footballmanagerapp.mapper.PlayerMapper;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class JdbcPlayerService extends AbstractPlayerService {
     private final JdbcPlayerRepository playerRepository;
 
